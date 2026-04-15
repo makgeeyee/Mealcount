@@ -3,30 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meal Count Tool</title>
+    <title>Meal Count</title>
     <style>
         body { font-family: -apple-system, sans-serif; padding: 15px; background-color: #f0f4f8; color: #333; }
         .container { max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 16px; box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
         h2 { text-align: center; margin-bottom: 20px; color: #1a202c; }
         
-        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        table { width: 100%; border-collapse: collapse; }
         th { text-align: left; padding: 10px; font-size: 0.75rem; color: #718096; text-transform: uppercase; border-bottom: 2px solid #edf2f7; }
         td { padding: 12px 8px; border-bottom: 1px solid #edf2f7; }
 
         .unit-label { font-weight: bold; color: #2d3748; font-size: 1.1rem; }
         select, input { 
-            width: 100%; padding: 10px; border: 1px solid #cbd5e0; border-radius: 8px; 
+            width: 100%; padding: 12px; border: 1px solid #cbd5e0; border-radius: 8px; 
             font-size: 1rem; box-sizing: border-box; background-color: #f8fafc;
         }
         
-        .subtotal { font-weight: 700; color: #3182ce; text-align: right; font-family: monospace; font-size: 1.1rem; }
-        
-        .grand-total-section { 
-            background: #2d3748; color: white; padding: 15px; border-radius: 10px; 
-            display: flex; justify-content: space-between; align-items: center;
-        }
-        .grand-total-label { font-size: 1rem; font-weight: 500; }
-        .grand-total-value { font-size: 1.5rem; font-weight: 800; font-family: monospace; }
+        .subtotal { font-weight: 700; color: #3182ce; text-align: right; font-family: monospace; font-size: 1.2rem; }
     </style>
 </head>
 <body>
@@ -46,56 +39,31 @@
         <tbody id="calculatorBody">
             </tbody>
     </table>
-
-    <div class="grand-total-section">
-        <span class="grand-total-label">Grand Total</span>
-        <span id="grandTotal" class="grand-total-value">0</span>
-    </div>
 </div>
 
 <script>
     const units = [28, 32, 36, 42, 48, 56];
     const tbody = document.getElementById('calculatorBody');
 
-    // Generate Rows
+    // Build the table rows
     units.forEach(unit => {
         const row = document.createElement('tr');
         row.innerHTML = `
             <td class="unit-label">${unit}</td>
             <td>
-                <select class="qty-drop" data-unit="${unit}" onchange="calculate()">
+                <select class="qty-drop" data-unit="${unit}" onchange="calculateRow(${unit})">
                     <option value="0">0</option>
                     ${[1,2,3,4,5,6,7,8,9].map(n => `<option value="${n}">${n}</option>`).join('')}
                 </select>
             </td>
             <td>
-                <input type="number" class="extra-input" data-unit="${unit}" placeholder="0" oninput="calculate()">
+                <input type="number" class="extra-input" data-unit="${unit}" placeholder="0" oninput="calculateRow(${unit})">
             </td>
             <td class="subtotal" id="total-${unit}">0</td>
         `;
         tbody.appendChild(row);
     });
 
-    function calculate() {
-        let grandTotal = 0;
-
-        units.forEach(unit => {
-            const qty = parseInt(document.querySelector(`.qty-drop[data-unit="${unit}"]`).value) || 0;
-            const extra = parseInt(document.querySelector(`.extra-input[data-unit="${unit}"]`).value) || 0;
-            
-            // Logic: (Qty * Unit) + Extra
-            const subtotal = (qty * unit) + extra;
-            
-            document.getElementById(`total-${unit}`).innerText = subtotal;
-            grandTotal += subtotal;
-        });
-
-        document.getElementById('grandTotal').innerText = grandTotal;
-    }
-
-    // Initial run
-    calculate();
-</script>
-
-</body>
-</html>
+    function calculateRow(unit) {
+        const qty = parseInt(document.querySelector(`.qty-drop[data-unit="${unit}"]`).value) || 0;
+        const extra = parseInt(document.querySelector(`.extra-
